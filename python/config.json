@@ -1,0 +1,12 @@
+{
+    "param1": 20,
+    "param2": 20,
+    "param3": 20,
+    "param4": 10,
+    "param5": 10,
+    "param6": 10,
+    "param7": 10,
+    "max_repeat": 3,
+    "video_buffer": 10,
+    "delta_sync_mode": 15
+}
