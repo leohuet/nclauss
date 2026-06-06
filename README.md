@@ -32,8 +32,8 @@ sudo systemctl stop myscript.service
 ```bash
 sudo raspi-config
 ```
-    Dans la fenêtre qui s'ouvre, tu peux aller dans "System Options" puis "Wireless LAN" pour configurer ton réseau wifi.
-    Enfin faire
+Dans la fenêtre qui s'ouvre, tu peux aller dans "System Options" puis "Wireless LAN" pour configurer ton réseau wifi.
+Enfin faire
 ```bash
 sudo reboot
 ```
@@ -43,7 +43,7 @@ sudo reboot
 ```bash
 ssh clausspi@clausspi1.local
 ```
-    Pour chaque Raspberry, tu pourras faire la même chose en changeant le hostname à chaque fois (voir plus loin dans le document).
+Pour chaque Raspberry, tu pourras faire la même chose en changeant le hostname à chaque fois (voir plus loin dans le document).
 
 
 ### Copier les fichiers vidéos sur la Raspberry Pi
