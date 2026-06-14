@@ -108,87 +108,91 @@ def random_video():
 def preload(path):
     global BUFFER_SIZE, buffer, cap
     cap = cv2.VideoCapture(path)
-
     ret = True
-
     print(f"Loading video: {path}")
     for _ in range(BUFFER_SIZE):
         ret, frame = cap.read()
         if not ret:
             break
-        buffer.append(cv2.cvtColor(frame, cv2.COLOR_BGR2BGR565))
-        
+        buffer.append(frame)
     print(f"Video {path}, fully loaded\n")
     return buffer
 
 
-def video_handler():
-    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, FBIO_WAITFORVSYNC
-    
-    new_video = True
-    last_frame_ts = 0
-    
-    fb_fd = os.open("/dev/fb0", os.O_RDWR)
-    fb_map = np.memmap("/dev/fb0", dtype='uint8',mode='r+', shape=(1080,1920,2))
-    
+def video_decoder():
+    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, sync_video
     if os.path.getmtime(CONFIG_FILE) != old_getmtime:
         old_getmtime = os.path.getmtime(CONFIG_FILE)
         cfg = load_config()
         local_config = cfg
-    
+
     while running:
-        if len(buffer) == 0:
+        if len(buffer) >= buffer.maxlen:
+            time.sleep(0.001)
             continue
-        
-        if new_video:
-            start_time = time.perf_counter()
-            frame_index = 0
-            new_video = False
-        
-        frame = buffer.popleft()
-        fcntl.ioctl(fb_fd, FBIO_WAITFORVSYNC)
-        fb_map[:] = frame
 
         # refill ONE frame
         ret, new_frame = cap.read()
         if ret:
-            buffer.append(cv2.cvtColor(new_frame, cv2.COLOR_BGR2BGR565))
+            buffer.append(new_frame)
         else:
             print("changing video")
             if status == "synchronous":
                 good_videos = videos[to_category].copy()
-                good_videos.remove(video)
-                video = random.choice(good_videos)
-                path = os.path.join(current_dir, to_category, video)
+                good_videos.remove(sync_video)
+                sync_video = random.choice(good_videos)
+                path = os.path.join(current_dir, to_category, sync_video)
             else:
                 path = random_video()
             cap.release()
             cap = cv2.VideoCapture(path)
             new_video = True
             ret, new_frame = cap.read()
-            buffer.append(cv2.cvtColor(new_frame, cv2.COLOR_BGR2BGR565))
+            buffer.append(new_frame)
 
         if status == "synchronous" and to_sync:
             to_sync = False
             print("to category: " + to_category)
-            video = random.choice(videos[to_category])
-            print(video)
+            sync_video = random.choice(videos[to_category])
+            print(sync_video)
             cap.release()
-            cap = cv2.VideoCapture(os.path.join(current_dir, to_category, video))
+            cap = cv2.VideoCapture(os.path.join(current_dir, to_category, sync_video))
             new_video = True
             ret, new_frame = cap.read()
-            buffer.append(cv2.cvtColor(new_frame, cv2.COLOR_BGR2BGR565))
+            buffer.append(new_frame)
 
-        since_last = time.perf_counter() - last_frame_ts
-        to_wait = (1/FPS) - since_last
 
-        if to_wait > 0:
-            time.sleep(to_wait)
-       # else:
-           # print(f"Player lagging behind by: {(to_wait * -1000):.2f}ms")
+def video_handler():
+    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, FBIO_WAITFORVSYNC
+    new_video = True
+    start_time = time.perf_counter()
+    frame_index = 0
+    fb_fd = os.open("/dev/fb0", os.O_RDWR)
+    fb_map = np.memmap("/dev/fb0", dtype='uint8',mode='r+', shape=(1080,1920,3))
 
-        last_frame_ts = time.perf_counter()
+    while running:
+        if len(buffer) == 0:
+            time.sleep(0.01)
+            continue
+        
+        if new_video:
+            start_time = time.perf_counter()
+            frame_index = 0
+            new_video = False
 
+        target = start_time + frame_index / FPS
+        
+        frame = buffer.popleft()
+        fcntl.ioctl(fb_fd, FBIO_WAITFORVSYNC)
+        fb_map[:] = frame
+
+        while True:
+            remaining = target - time.perf_counter()
+            if remaining <= 0:
+                break
+            time.sleep(min(remaining, 0.001))
+
+        frame_index += 1
 
 
 # Load config
@@ -241,7 +245,7 @@ def flash_screen():
     global current_dir, buffer
     print("FLASHING SCREEN...")
     white = cv2.imread(os.path.join(current_dir, "white.png"))
-    buffer.append(cv2.cvtColor(white, cv2.COLOR_BGR2BGR565))
+    buffer.append(white)
     print("Done flashing")
     return redirect(url_for("index"))
 
@@ -293,7 +297,7 @@ def delete_file():
 
     files_loader()
     return redirect(url_for("index"))
-        
+
 
 @app.route("/save_config", methods=["POST"])
 def save_parameters():
@@ -323,7 +327,7 @@ old_videos = []
 wrong_folders = [".idea", ".venv", "templates", "uploads"]
 current_dir = os.path.join(pathlib.Path(__file__).parent.resolve(), 'uploads')
 
-BASE_UPLOAD_FOLDER = "/home/clausspi1/clauss/uploads"
+BASE_UPLOAD_FOLDER = current_dir
 CONFIG_FILE = os.path.join(pathlib.Path(__file__).parent.resolve(), 'config.json')
 
 os.makedirs(BASE_UPLOAD_FOLDER, exist_ok=True)
@@ -352,7 +356,6 @@ config = load_config()
 dispatcher = Dispatcher()
 dispatcher.map("/synchronous", filter_handler)
 
-# ip = netifaces.ifaddresses('wlan0')[2][0]['addr']
 ip = "0.0.0.0"
 print(ip)
 port = 9000
@@ -364,9 +367,8 @@ BUFFER_SIZE = FPS * BUFFER_SECONDS
 
 os.environ["vblank_mode"] = "1"
 
-buffer = deque()
+buffer = deque(maxlen=100)
 cap = cv2.VideoCapture()
-
 
 to_category = None
 status = "random"
@@ -386,12 +388,12 @@ time.sleep(10)
 
 
 if __name__ == "__main__":
-    # This was not explained in the video, but without this
-    # you will see the blinking cursor of the terminal
     os.system('sudo sh -c "TERM=linux setterm -foreground black -clear all > /dev/tty0"')
     os.system('sudo sh -c "TERM=linux setterm -cursor off > /dev/tty0"')
     # subprocess.Popen(["unclutter", "-idle", "0.01", "-root"])
     running = True
+    decoder_thread = threading.Thread(target=video_decoder, daemon=False)
+    decoder_thread.start()
     video_thread = threading.Thread(target=video_handler, daemon=False)
     video_thread.start()
     osc_thread = threading.Thread(target=osc_receiver, daemon=False)
