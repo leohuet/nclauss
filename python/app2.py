@@ -120,7 +120,11 @@ def preload(path):
 
 
 def video_decoder():
+<<<<<<< HEAD
     global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, sync_video
+=======
+    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, sync_video, FBIO_WAITFORVSYNC, fb_fd
+>>>>>>> 24128e2 ([FIX] fix stutter by having two separate threads for video decoding and displaying.)
     if os.path.getmtime(CONFIG_FILE) != old_getmtime:
         old_getmtime = os.path.getmtime(CONFIG_FILE)
         cfg = load_config()
@@ -130,6 +134,11 @@ def video_decoder():
         if len(buffer) >= buffer.maxlen:
             time.sleep(0.001)
             continue
+<<<<<<< HEAD
+=======
+
+        fcntl.ioctl(fb_fd, FBIO_WAITFORVSYNC)
+>>>>>>> 24128e2 ([FIX] fix stutter by having two separate threads for video decoding and displaying.)
 
         # refill ONE frame
         ret, new_frame = cap.read()
@@ -163,7 +172,11 @@ def video_decoder():
 
 
 def video_handler():
+<<<<<<< HEAD
     global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, FBIO_WAITFORVSYNC
+=======
+    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, FBIO_WAITFORVSYNC, fb_fd
+>>>>>>> 24128e2 ([FIX] fix stutter by having two separate threads for video decoding and displaying.)
     new_video = True
     start_time = time.perf_counter()
     frame_index = 0

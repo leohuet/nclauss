@@ -1,1 +1,5 @@
-1, 600 200 1000 0 0 1 192.168.1.255;
+<<<<<<< HEAD
+1, 600 200 1000 0 0 1 192.168.1.255;
+=======
+1, 600 200 1000 0 0 2 192.168.1.255;
+>>>>>>> 24128e2 ([FIX] fix stutter by having two separate threads for video decoding and displaying.)
