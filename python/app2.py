@@ -120,32 +120,16 @@ def preload(path):
 
 
 def video_decoder():
-<<<<<<< HEAD
-    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, sync_video
-=======
-    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, sync_video, FBIO_WAITFORVSYNC, fb_fd
->>>>>>> 24128e2 ([FIX] fix stutter by having two separate threads for video decoding and displaying.)
+    global local_config, running, cap, status, to_sync, to_category, old_getmtime, sync_video, reload_video, new_video
     if os.path.getmtime(CONFIG_FILE) != old_getmtime:
         old_getmtime = os.path.getmtime(CONFIG_FILE)
         cfg = load_config()
         local_config = cfg
 
     while running:
-        if len(buffer) >= buffer.maxlen:
-            time.sleep(0.001)
-            continue
-<<<<<<< HEAD
-=======
-
-        fcntl.ioctl(fb_fd, FBIO_WAITFORVSYNC)
->>>>>>> 24128e2 ([FIX] fix stutter by having two separate threads for video decoding and displaying.)
-
-        # refill ONE frame
-        ret, new_frame = cap.read()
-        if ret:
-            buffer.append(new_frame)
-        else:
+        if reload_video:
             print("changing video")
+            reload_video = False
             if status == "synchronous":
                 good_videos = videos[to_category].copy()
                 good_videos.remove(sync_video)
@@ -156,8 +140,6 @@ def video_decoder():
             cap.release()
             cap = cv2.VideoCapture(path)
             new_video = True
-            ret, new_frame = cap.read()
-            buffer.append(new_frame)
 
         if status == "synchronous" and to_sync:
             to_sync = False
@@ -167,19 +149,14 @@ def video_decoder():
             cap.release()
             cap = cv2.VideoCapture(os.path.join(current_dir, to_category, sync_video))
             new_video = True
-            ret, new_frame = cap.read()
-            buffer.append(new_frame)
 
 
 def video_handler():
-<<<<<<< HEAD
-    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, FBIO_WAITFORVSYNC
-=======
-    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, FBIO_WAITFORVSYNC, fb_fd
->>>>>>> 24128e2 ([FIX] fix stutter by having two separate threads for video decoding and displaying.)
+    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, FBIO_WAITFORVSYNC, reload_video, new_video
     new_video = True
     start_time = time.perf_counter()
     frame_index = 0
+    end_video = True
     fb_fd = os.open("/dev/fb0", os.O_RDWR)
     fb_map = np.memmap("/dev/fb0", dtype='uint8',mode='r+', shape=(1080,1920,3))
 
@@ -192,12 +169,23 @@ def video_handler():
             start_time = time.perf_counter()
             frame_index = 0
             new_video = False
+            end_video = True
+            print("new video")
 
         target = start_time + frame_index / FPS
         
         frame = buffer.popleft()
         fcntl.ioctl(fb_fd, FBIO_WAITFORVSYNC)
         fb_map[:] = frame
+
+        # refill ONE frame
+        ret, new_frame = cap.read()
+        if ret:
+            buffer.append(new_frame)
+        elif end_video:
+            print("to loading thread")
+            reload_video = True
+            end_video = False
 
         while True:
             remaining = target - time.perf_counter()
@@ -386,6 +374,7 @@ cap = cv2.VideoCapture()
 to_category = None
 status = "random"
 to_sync = False
+reload_video = False
 
 print("loading files: ")
 files_loader()
