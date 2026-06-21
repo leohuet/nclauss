@@ -170,23 +170,19 @@ def video_handler():
     start_time = time.perf_counter()
     frame_index = 0
     fb_fd = os.open("/dev/fb0", os.O_RDWR)
-    fb_map = np.memmap("/dev/fb0", dtype='uint8',mode='r+', shape=(1080,1920,3))
+    fb_map = np.memmap("/dev/fb0", dtype='uint8', mode='r+', shape=(1080, 1920, 3))
 
     while running:
         if len(buffer) == 0:
             time.sleep(0.01)
             continue
-        
+
         if new_video:
             start_time = time.perf_counter()
             frame_index = 0
             new_video = False
 
         target = start_time + frame_index / FPS
-        
-        frame = buffer.popleft()
-        fcntl.ioctl(fb_fd, FBIO_WAITFORVSYNC)
-        fb_map[:] = frame
 
         while True:
             remaining = target - time.perf_counter()
@@ -195,6 +191,10 @@ def video_handler():
             time.sleep(min(remaining, 0.001))
 
         frame_index += 1
+
+        frame = buffer.popleft()
+        fcntl.ioctl(fb_fd, FBIO_WAITFORVSYNC)
+        fb_map[:] = frame
 
 
 # Load config
