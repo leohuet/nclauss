@@ -62,6 +62,10 @@ Pour cela utilise cette commande :
 ```bash
 cp -r /media/nomdetacleusb/nomdetondossier /home/clausspi/clauss/uploads
 ```
+Pour vérifier que les fichiers sont bien copiés :
+```bash
+ls /home/clausspi/clauss/uploads/dossiercatégorie
+```
 Enfin tu pourras supprimer mes fichiers d'exemple depuis l'interface web.
 
 
