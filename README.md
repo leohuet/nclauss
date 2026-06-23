@@ -43,6 +43,10 @@ sudo reboot
 ```bash
 ssh clausspi@clausspi1.local
 ```
+ou par exemple
+```bash
+ssh clausspi@192.168.1.100
+```
 Pour chaque Raspberry, tu pourras faire la même chose en changeant le hostname à chaque fois (voir plus loin dans le document).
 
 
@@ -65,5 +69,6 @@ Enfin tu pourras supprimer mes fichiers d'exemple depuis l'interface web.
 
 Là, je te laisse le choix de la marche à suivre. Soit utiliser mon image et devoir remettre le wifi sur chaque Raspberry, soit utiliser ta première Raspberry configurée pour recréer une nouvelle image qui sera ensuite dupliquée sur les autres Raspberry.
 
-Dans tous les cas, il faut bien que chaque Raspberry ait son nom d'hôte unique, donc quand tu dupliques une sd, allume uniquement la nouvelle Raspberry et va dans "raspi-config" puis "System Options", "Hostname". Là tu peux modifier le nom d'hôte et changer le numéro à chaque fois pour avoir clausspi*.local avec * de 1 à 15. 
+Dans tous les cas, il faut bien que chaque Raspberry ait son nom d'hôte unique, donc quand tu dupliques une sd, allume uniquement la nouvelle Raspberry.
+En SSH (via l'adresse IP que tu peux retrouver sur Angry IP Scanner ou sur la page de configuration de ton routeur), va dans "raspi-config" puis "System Options", "Hostname". Là tu peux modifier le nom d'hôte et changer le numéro à chaque fois pour avoir clausspi*.local avec * de 1 à 15. 
 
