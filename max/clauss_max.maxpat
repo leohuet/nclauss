@@ -40,6 +40,55 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-100",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "bang", "" ],
+					"patching_rect" : [ 1309.400000000000091, 274.0, 31.0, 22.0 ],
+					"text" : "t b s"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-75",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 1321.400000000000091, 305.0, 41.0, 22.0 ],
+					"text" : "set $1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bgcolor" : [ 0.054901960784314, 0.356862745098039, 0.647058823529412, 1.0 ],
+					"id" : "obj-71",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 1309.400000000000091, 243.0, 58.0, 22.0 ],
+					"text" : "r toData7"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bgcolor" : [ 0.741176470588235, 0.188235294117647, 0.188235294117647, 1.0 ],
+					"id" : "obj-36",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 1067.400000000000091, 430.188082147836667, 55.0, 22.0 ],
+					"text" : "s toColl7"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-70",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -2002,7 +2051,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 717.0, 100.0, 649.0, 848.0 ],
+						"rect" : [ 707.0, 1180.0, 649.0, 848.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -2030,7 +2079,33 @@
 						"style" : "",
 						"subpatcher_template" : "audio_template",
 						"assistshowspatchername" : 0,
+						"visible" : 1,
 						"boxes" : [ 							{
+								"box" : 								{
+									"bgcolor" : [ 0.741176470588235, 0.188235294117647, 0.188235294117647, 1.0 ],
+									"id" : "obj-10",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 375.400000000000091, 555.0, 60.0, 22.0 ],
+									"text" : "s toData7"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bgcolor" : [ 0.054901960784314, 0.356862745098039, 0.647058823529412, 1.0 ],
+									"id" : "obj-8",
+									"maxclass" : "newobj",
+									"numinlets" : 0,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 542.166666666666515, 324.0, 53.0, 22.0 ],
+									"text" : "r toColl7"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"comment" : "",
 									"id" : "obj-5",
@@ -2186,8 +2261,8 @@
 									"numinlets" : 0,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 403.5, 324.0, 60.0, 22.0 ],
-									"text" : "r toColl13"
+									"patching_rect" : [ 403.5, 324.0, 53.0, 22.0 ],
+									"text" : "r toColl3"
 								}
 
 							}
@@ -2222,10 +2297,10 @@
 									"id" : "obj-34",
 									"maxclass" : "newobj",
 									"numinlets" : 1,
-									"numoutlets" : 6,
-									"outlettype" : [ "int", "int", "int", "int", "int", "int" ],
-									"patching_rect" : [ 109.0, 515.0, 241.0, 22.0 ],
-									"text" : "unpack 600 180 1000 0 0 0"
+									"numoutlets" : 7,
+									"outlettype" : [ "int", "int", "int", "int", "int", "int", "" ],
+									"patching_rect" : [ 109.0, 515.0, 285.400000000000091, 22.0 ],
+									"text" : "unpack 600 180 1000 0 0 0 s"
 								}
 
 							}
@@ -2295,11 +2370,11 @@
 								"box" : 								{
 									"id" : "obj-3",
 									"maxclass" : "newobj",
-									"numinlets" : 7,
+									"numinlets" : 8,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 299.5, 355.0, 227.000000000000114, 22.0 ],
-									"text" : "pack 1 600 180 1000 0 0 0"
+									"patching_rect" : [ 299.5, 355.0, 261.666666666666515, 22.0 ],
+									"text" : "pack 1 600 180 1000 0 0 0 s"
 								}
 
 							}
@@ -2412,6 +2487,13 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-10", 0 ],
+									"source" : [ "obj-34", 6 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-41", 0 ],
 									"source" : [ "obj-34", 0 ]
 								}
@@ -2519,6 +2601,13 @@
 								"patchline" : 								{
 									"destination" : [ "obj-2", 0 ],
 									"source" : [ "obj-7", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-3", 7 ],
+									"source" : [ "obj-8", 0 ]
 								}
 
 							}
@@ -2713,6 +2802,21 @@
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-10", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-57", 0 ],
+					"midpoints" : [ 1318.900000000000091, 347.0, 1142.0, 347.0 ],
+					"source" : [ "obj-100", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-75", 0 ],
+					"source" : [ "obj-100", 1 ]
 				}
 
 			}
@@ -3146,7 +3250,16 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-36", 0 ],
+					"order" : 1,
+					"source" : [ "obj-62", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-58", 0 ],
+					"order" : 0,
 					"source" : [ "obj-62", 0 ]
 				}
 
@@ -3217,6 +3330,21 @@
 					"midpoints" : [ 1162.0, 232.0, 1207.5, 232.0 ],
 					"order" : 0,
 					"source" : [ "obj-7", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-100", 0 ],
+					"source" : [ "obj-71", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-57", 0 ],
+					"midpoints" : [ 1330.900000000000091, 348.0, 1142.0, 348.0 ],
+					"source" : [ "obj-75", 0 ]
 				}
 
 			}
@@ -3393,7 +3521,7 @@
 ,
 		"dependency_cache" : [ 			{
 				"name" : "data.txt",
-				"bootpath" : "~/Documents/TAFF/2026/260422_Nicolas_clauss/max/data",
+				"bootpath" : "~/Documents/TAFF/2026/260422_Nicolas_clauss/nclauss/max/data",
 				"patcherrelativepath" : "./data",
 				"type" : "TEXT",
 				"implicit" : 1
