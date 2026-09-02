@@ -8,5 +8,6 @@
     "param7": 10,
     "max_repeat": 3,
     "video_buffer": 10,
+    "min_sync_mode": 0,
     "delta_sync_mode": 15
 }

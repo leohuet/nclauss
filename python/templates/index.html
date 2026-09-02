@@ -161,6 +161,14 @@
 			<label>Video buffer:</label>
 			<input type="number" name="video_buffer" min="1" value="{{ config.video_buffer }}">
 			<br>
+
+			<label>Délai min de passage au mode synchrone (sec):</label>
+			<input type="number" name="min_sync_mode" min="0" value="{{ config.min_sync_mode }}">
+			<br>
+
+			<label>Délai max de passage au mode synchrone (sec):</label>
+			<input type="number" name="delta_sync_mode" min="1" value="{{ config.delta_sync_mode }}">
+			<br>
 			<br>
 
 			<button type="submit">Save</button>

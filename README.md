@@ -60,7 +60,7 @@ ls /media/nomdetacleusb
 Ensuite, tu peux copier coller directement chaque dossier de catégorie avec les vidéos que tu veux dans chaque (par exemple, un dossier "dos" déjà fait avec 10 vidéos dedans).
 Pour cela utilise cette commande :
 ```bash
-cp -r /media/nomdetacleusb/nomdetondossier /home/clausspi/clauss/uploads
+sudo cp -r /media/nomdetacleusb/nomdetondossier /home/clausspi/clauss/uploads
 ```
 Pour vérifier que les fichiers sont bien copiés :
 ```bash

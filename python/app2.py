@@ -36,7 +36,7 @@ def filter_handler(address, *args):
     global local_config, to_category, status, to_sync
     if args[0] == 1:
         print("going synchronous")
-        time.sleep(random.randint(0, local_config["delta_sync_mode"]))
+        time.sleep(random.randint(local_config["min_sync_mode"], local_config["delta_sync_mode"]))
         to_sync = True
         status = "synchronous"
         to_category = args[1]
@@ -75,9 +75,9 @@ def random_video():
         weights_map[c]
         for c in available_categories
     ]
-    
+
     category = random.choices(available_categories, weights=available_weights, k=1)[0]
-    
+
     if category == last_category:
         repeat_count += 1
     else:
@@ -314,6 +314,7 @@ def save_parameters():
         "param7": int(request.form["param7"]),
         "max_repeat": int(request.form["max_repeat"]),
         "video_buffer": int(request.form["video_buffer"]),
+        "min_sync_mode": int(request.form["min_sync_mode"]),
         "delta_sync_mode": int(request.form["delta_sync_mode"])
     }
 
@@ -344,6 +345,7 @@ default_config = {
     "param7": 40,
     "max_repeat": 3,
     "video_buffer": 10,
+    "min_sync_mode": 0,
     "delta_sync_mode": 10
 }
 
