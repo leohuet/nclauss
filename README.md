@@ -76,3 +76,5 @@ Là, je te laisse le choix de la marche à suivre. Soit utiliser mon image et de
 Dans tous les cas, il faut bien que chaque Raspberry ait son nom d'hôte unique, donc quand tu dupliques une sd, allume uniquement la nouvelle Raspberry.
 En SSH (via l'adresse IP que tu peux retrouver sur Angry IP Scanner ou sur la page de configuration de ton routeur), va dans "raspi-config" puis "System Options", "Hostname". Là tu peux modifier le nom d'hôte et changer le numéro à chaque fois pour avoir clausspi*.local avec * de 1 à 15. 
 
+Pour dupliquer la carte SD de ta première Raspberry Pi configurée, tu peux utiliser le logiciel [ApplePiBaker](https://apple-pi-baker.fr.malavida.com/mac/download) sur Mac. 
+L'interface est très simple, tu cliques sur "Select Disk" pour choisir la carte SD, puis sur "Backup" pour créer ton image. Dans la fenêtre qui s'ouvre pour sauvegarder ton fichier, sélectionne bien le format IMG en bas de la fenêtre (et non zip), puis clique sur "Save".
