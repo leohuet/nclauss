@@ -829,7 +829,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 172.0, 49.5, 210.0, 50.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 12.0, 345.478680204153079, 240.0, 28.0 ],
+					"presentation_rect" : [ 11.0, 345.478680204153079, 240.0, 28.0 ],
 					"text" : "Dossier du mode synchrone :",
 					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
 				}
@@ -1045,7 +1045,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 181.0, 70.0, 232.0, 31.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 255.0, 71.620457410812378, 210.0, 31.0 ],
+					"presentation_rect" : [ 240.0, 71.620457410812378, 210.0, 31.0 ],
 					"text" : "Broadcast IP address:",
 					"textcolor" : [ 1.0, 1.0, 1.0, 1.0 ]
 				}
