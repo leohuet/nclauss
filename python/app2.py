@@ -13,6 +13,7 @@ from collections import deque
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import json
 import fcntl
+import math
 
 
 app = Flask(__name__)
@@ -33,10 +34,19 @@ def files_loader():
 
 
 def filter_handler(address, *args):
-    global local_config, to_category, status, to_sync
+    global local_config, to_category, status, to_sync, start_time, video_duration
     if args[0] == 1:
         print("going synchronous")
-        time.sleep(random.randint(local_config["min_sync_mode"], local_config["delta_sync_mode"]))
+        sync_time = time.perf_counter()
+        time_left = video_duration - (sync_time - start_time)
+        if time_left <= 2:
+            print("go")
+        elif local_config["min_sync_mode"] < time_left < local_config["delta_sync_mode"]:
+            time.sleep(random.randint(local_config["min_sync_mode"], math.floor(time_left)))
+        elif time_left < local_config["min_sync_mode"]:
+            time.sleep(math.floor(time_left) - 2)
+        else:
+            time.sleep(random.randint(local_config["min_sync_mode"], local_config["delta_sync_mode"]))
         to_sync = True
         status = "synchronous"
         to_category = args[1]
@@ -106,8 +116,10 @@ def random_video():
 
 
 def preload(path):
-    global BUFFER_SIZE, buffer, cap
+    global BUFFER_SIZE, buffer, cap, video_duration
     cap = cv2.VideoCapture(path)
+    frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+    video_duration = frames / FPS
     ret = True
     print(f"Loading video: {path}")
     for _ in range(BUFFER_SIZE):
@@ -120,7 +132,7 @@ def preload(path):
 
 
 def video_decoder():
-    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, sync_video, FBIO_WAITFORVSYNC, fb_fd
+    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, sync_video, FBIO_WAITFORVSYNC, fb_fd, video_duration, new_video
     if os.path.getmtime(CONFIG_FILE) != old_getmtime:
         old_getmtime = os.path.getmtime(CONFIG_FILE)
         cfg = load_config()
@@ -142,12 +154,16 @@ def video_decoder():
             if status == "synchronous":
                 good_videos = videos[to_category].copy()
                 good_videos.remove(sync_video)
+                if len(good_videos) == 0:
+                    good_videos = videos[to_category].copy()
                 sync_video = random.choice(good_videos)
                 path = os.path.join(current_dir, to_category, sync_video)
             else:
                 path = random_video()
             cap.release()
             cap = cv2.VideoCapture(path)
+            frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+            video_duration = frames / FPS
             new_video = True
             ret, new_frame = cap.read()
             buffer.append(new_frame)
@@ -165,8 +181,7 @@ def video_decoder():
 
 
 def video_handler():
-    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, FBIO_WAITFORVSYNC, fb_fd
-    new_video = True
+    global local_config, running, buffer, cap, status, to_sync, to_category, old_getmtime, FBIO_WAITFORVSYNC, fb_fd, start_time, new_video
     start_time = time.perf_counter()
     frame_index = 0
     fb_fd = os.open("/dev/fb0", os.O_RDWR)
@@ -179,6 +194,7 @@ def video_handler():
 
         if new_video:
             start_time = time.perf_counter()
+            print(start_time)
             frame_index = 0
             new_video = False
 
@@ -368,6 +384,7 @@ start_time = 0
 FPS = 25
 BUFFER_SECONDS = 4
 BUFFER_SIZE = FPS * BUFFER_SECONDS
+video_duration = 0
 
 os.environ["vblank_mode"] = "1"
 
@@ -377,6 +394,7 @@ cap = cv2.VideoCapture()
 to_category = None
 status = "random"
 to_sync = False
+new_video = True
 
 print("loading files: ")
 files_loader()
